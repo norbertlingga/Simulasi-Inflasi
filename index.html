@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISI MENGENDALIKAN INFLASI · Simulasi Ekonomi SMA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b2b3b 0%, #1a4b5e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .simulation-container {
+            max-width: 1200px;
+            width: 100%;
+            background: #f8fafc;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -8px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+            overflow: hidden;
+            padding: 24px 28px 28px;
+            border: 1px solid #cfdfe8;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .title h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #0e3b4b, #1f6e8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .title p {
+            font-size: 0.9rem;
+            color: #2c5a6e;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .stage-badge {
+            background: #e3f0f7;
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-weight: 700;
+            color: #0a3e50;
+            border: 1px solid #b6d6e6;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2.2fr 1fr;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 18px 20px;
+            box-shadow: 0 10px 18px -8px rgba(0, 30, 40, 0.15);
+            border: 1px solid #d9e8f0;
+        }
+
+        .card h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #3e6f85;
+            margin-bottom: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .indicators-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .indicator-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #cbdde8;
+            padding-bottom: 10px;
+        }
+
+        .indicator-label {
+            font-weight: 600;
+            color: #1f4b5e;
+            font-size: 0.95rem;
+        }
+
+        .indicator-value {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #0b3b4b;
+        }
+
+        .indicator-value small {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #587d8f;
+            margin-left: 3px;
+        }
+
+        .badge-highlight {
+            background: #e8f4fa;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+
+        .price-mini {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .price-name {
+            width: 85px;
+            font-weight: 600;
+            color: #2d5b70;
+        }
+
+        .price-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: #e2eef5;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .price-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1f8e6e, #f4b942);
+            border-radius: 20px;
+            transition: width 0.3s;
+        }
+
+        .price-value {
+            width: 60px;
+            text-align: right;
+            font-weight: 700;
+            color: #1a4a5c;
+            font-size: 0.85rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .story-box {
+            background: linear-gradient(135deg, #fff7e7, #fffbee);
+            border-left: 8px solid #f4b942;
+            padding: 16px 22px;
+            border-radius: 24px;
+            font-size: 1.02rem;
+            line-height: 1.5;
+            color: #2d3e4b;
+            box-shadow: 0 6px 12px -6px rgba(0,0,0,0.08);
+            min-height: 105px;
+        }
+
+        .options-area {
+            background: #f3f9fd;
+            border-radius: 24px;
+            padding: 18px 20px;
+            border: 1px solid #cfdfe8;
+        }
+
+        .options-title {
+            font-weight: 700;
+            color: #1b4e63;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 1.5px solid #b6d6e6;
+            border-radius: 40px;
+            padding: 10px 18px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1c4b5e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            flex: 1 0 auto;
+            max-width: 100%;
+            text-align: left;
+            line-height: 1.3;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #e1f0f9;
+            border-color: #4b8da8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -10px #1f6e8c;
+        }
+
+        .option-btn.selected {
+            background: #1f6e8c;
+            border-color: #0b3b4b;
+            color: white;
+            box-shadow: 0 8px 12px -6px #0e3b4b;
+        }
+
+        .option-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.4);
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: #1f6e8c;
+            border: none;
+            border-radius: 60px;
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 10px 16px -8px #0b3b4b;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #0f4c62;
+            transform: scale(1.02);
+        }
+
+        .btn-primary:disabled {
+            background: #b0ccda;
+            box-shadow: none;
+            cursor: not-allowed;
+            color: #e1eff5;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1.5px solid #1f6e8c;
+            border-radius: 60px;
+            padding: 10px 22px;
+            font-weight: 600;
+            color: #1f6e8c;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn-secondary:hover {
+            background: #e1f0f9;
+        }
+
+        .feedback-box {
+            background: #e6f2f9;
+            border-radius: 20px;
+            padding: 14px 18px;
+            font-size: 0.92rem;
+            color: #1a4558;
+            border-left: 6px solid #1f8e6e;
+            margin-top: 8px;
+            line-height: 1.45;
+        }
+
+        .parties-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .party-chip {
+            background: white;
+            border-radius: 40px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1b4e63;
+            border: 1px solid #b6d6e6;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .party-chip span {
+            font-size: 1rem;
+        }
+
+        .score-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0b2b3b;
+            border-radius: 40px;
+            padding: 12px 20px;
+            color: white;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .score-summary span {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mt-2 {
+            margin-top: 12px;
+        }
+
+        .text-muted {
+            color: #6b8e9e;
+            font-size: 0.8rem;
+        }
+
+        .graph-container {
+            background: #f5fbfe;
+            border-radius: 20px;
+            padding: 10px;
+            margin-top: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .simulation-container {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="simulation-container">
+    <div class="header">
+        <div class="title">
+            <h1>🎯 MISI MENGENDALIKAN INFLASI</h1>
+            <p>Simulasi Interaktif Ekonomi SMA · Ambil keputusan, kendalikan inflasi!</p>
+        </div>
+        <div class="stage-badge" id="stageLabel">Tahap 1 · Ekonomi Normal</div>
+    </div>
+
+    <div class="dashboard">
+        <!-- KARTU INDIKATOR -->
+        <div class="card">
+            <h3>📊 INDIKATOR EKONOMI</h3>
+            <div class="indicators-grid">
+                <div class="indicator-item">
+                    <span class="indicator-label">Inflasi</span>
+                    <span class="indicator-value" id="inflasiVal">2.1%</span>
+                </div>
+                <div class="indicator-item">
+                    <span class="indicator-label">Daya Beli</span>
+                    <span class="indicator-value" id="dayaBeliVal">100<small>indeks</small></span>
+                </div>
+                <div class="indicator-item">
+                    <span class="indicator-label">Pertumbuhan Ekonomi</span>
+                    <span class="indicator-value" id="growthVal">5.2%</span>
+                </div>
+                <div class="indicator-item">
+                    <span class="indicator-label">Pengangguran</span>
+                    <span class="indicator-value" id="unemployVal">5.5%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL CERITA & AKSI -->
+        <div class="main-panel">
+            <div class="story-box" id="storyText">
+                🟢 Indonesia dalam kondisi stabil. Harga kebutuhan pokok terkendali, daya beli terjaga, inflasi 2.1%. Siapakah yang akan Anda tuju?
+            </div>
+            <div class="options-area" id="optionsArea">
+                <div class="options-title">🔽 PILIHAN TINDAKAN</div>
+                <div class="options-grid" id="optionsGrid"></div>
+                <div class="action-row">
+                    <button class="btn-primary" id="confirmBtn" disabled>✅ Konfirmasi Keputusan</button>
+                    <button class="btn-secondary" id="resetBtn">🔄 Ulangi Simulasi</button>
+                </div>
+            </div>
+            <div class="feedback-box" id="feedbackBox">
+                💡 Pilih tindakan yang tepat untuk mengendalikan inflasi.
+            </div>
+        </div>
+
+        <!-- PANEL HARGA & GRAFIK -->
+        <div class="card">
+            <h3>📈 HARGA BARANG</h3>
+            <div class="price-mini" id="priceList">
+                <!-- diisi via JS -->
+            </div>
+            <div class="graph-container">
+                <div style="font-weight:600; font-size:0.8rem; color:#1b4e63; margin-bottom:6px;">📉 PERBANDINGAN HARGA</div>
+                <canvas id="priceChart" width="240" height="120" style="width:100%; height:auto;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="score-summary">
+        <span>🏆 SKOR: <span id="scoreDisplay">0</span> / 100</span>
+        <span id="statusPesan" style="font-size:0.9rem;">⭐ Ayo mulai simulasi</span>
+    </div>
+
+    <!-- Pihak terlibat (statis) -->
+    <div class="flex-between mt-2">
+        <div style="font-size:0.75rem; color:#2d5b70; font-weight:600;">PIHAK TERLIBAT:</div>
+        <div class="parties-grid">
+            <div class="party-chip"><span>👤</span> Konsumen</div>
+            <div class="party-chip"><span>🏭</span> Produsen</div>
+            <div class="party-chip"><span>🛒</span> Pedagang</div>
+            <div class="party-chip"><span>🌾</span> Petani</div>
+            <div class="party-chip"><span>🏛️</span> Pemerintah</div>
+            <div class="party-chip"><span>🏦</span> Bank Indonesia</div>
+            <div class="party-chip"><span>💳</span> Perbankan</div>
+            <div class="party-chip"><span>🚚</span> Distributor</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- STATE ----------
+    const state = {
+        stage: 1,                 // 1..6
+        inflasi: 2.1,
+        dayaBeli: 100,
+        growth: 5.2,
+        unemployment: 5.5,
+        score: 0,
+        // harga awal (indeks)
+        prices: {
+            beras: 100, minyak: 100, telur: 100, cabai: 100, transportasi: 100, listrik: 100, makanan: 100
+        },
+        // harga setelah inflasi (tahap 3) disimpan
+        inflatedPrices: null,
+        selectedPolicy: null,
+        // daftar penyebab acak
+        causes: [],
+        // efek kebijakan
+        policyEffect: null,
+        // langkah
+        stepDone: false,
+        decisionLog: []
+    };
+
+    // ---------- DAFTAR PIHAK & PENYEBAB ----------
+    const pihakList = [
+        "Konsumen", "Produsen", "Pedagang", "Petani", "Pemerintah", "Bank Indonesia", "Perbankan", "Distributor"
+    ];
+
+    const penyebabList = [
+        { id: 'bbm', text: 'Harga BBM naik', inflasiAdd: 0.8, dayaBeliAdd: -4 },
+        { id: 'bahan', text: 'Bahan baku produksi meningkat', inflasiAdd: 0.6, dayaBeliAdd: -3 },
+        { id: 'permintaan', text: 'Permintaan masyarakat meningkat tajam', inflasiAdd: 0.7, dayaBeliAdd: -2 },
+        { id: 'gagal', text: 'Terjadi gagal panen', inflasiAdd: 0.9, dayaBeliAdd: -5 },
+        { id: 'rupiah', text: 'Nilai tukar rupiah melemah', inflasiAdd: 0.5, dayaBeliAdd: -3 },
+        { id: 'distribusi', text: 'Distribusi barang terganggu', inflasiAdd: 0.6, dayaBeliAdd: -4 },
+        { id: 'uang', text: 'Jumlah uang beredar dan kredit meningkat terlalu cepat', inflasiAdd: 0.8, dayaBeliAdd: -3 }
+    ];
+
+    // ---------- DAFTAR KEBIJAKAN (dengan efek) ----------
+    const kebijakanList = [
+        { id: 'sukuBunga', label: '🏦 BI menaikkan suku bunga', desk: 'Mengendalikan likuiditas & permintaan.', effect: { inflasi: -1.2, growth: -0.6, unemployment: +0.4, dayaBeli: +6, score: 12 } },
+        { id: 'subsidi', label: '🏛️ Subsidi tepat sasaran', desk: 'Membantu daya beli masyarakat miskin.', effect: { inflasi: -0.5, growth: +0.2, unemployment: -0.1, dayaBeli: +10, score: 8 } },
+        { id: 'operasiPasar', label: '🛒 Operasi pasar', desk: 'Menstabilkan harga barang pokok.', effect: { inflasi: -0.8, growth: +0.1, unemployment: 0, dayaBeli: +8, score: 10 } },
+        { id: 'cadanganPangan', label: '🌾 Cadangan & pasokan pangan', desk: 'Memperkuat ketahanan pangan.', effect: { inflasi: -0.7, growth: +0.3, unemployment: -0.2, dayaBeli: +7, score: 10 } },
+        { id: 'distribusi', label: '🚚 Perbaiki jalur distribusi', desk: 'Mengurangi kelangkaan barang.', effect: { inflasi: -0.6, growth: +0.4, unemployment: -0.1, dayaBeli: +6, score: 9 } },
+        { id: 'produksiDalamNegeri', label: '🇮🇩 Dukung produksi dalam negeri', desk: 'Mengurangi impor & ketergantungan.', effect: { inflasi: -0.4, growth: +0.5, unemployment: -0.3, dayaBeli: +5, score: 8 } },
+        { id: 'kreditLikuiditas', label: '💳 Kendalikan kredit & likuiditas', desk: 'Mencegah inflasi dari sisi moneter.', effect: { inflasi: -0.9, growth: -0.3, unemployment: +0.2, dayaBeli: +4, score: 10 } }
+    ];
+
+    // ---------- DOM ELEMEN ----------
+    const stageLabel = document.getElementById('stageLabel');
+    const storyText = document.getElementById('storyText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const feedbackBox = document.getElementById('feedbackBox');
+    const inflasiVal = document.getElementById('inflasiVal');
+    const dayaBeliVal = document.getElementById('dayaBeliVal');
+    const growthVal = document.getElementById('growthVal');
+    const unemployVal = document.getElementById('unemployVal');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const statusPesan = document.getElementById('statusPesan');
+    const priceList = document.getElementById('priceList');
+    const canvas = document.getElementById('priceChart');
+    const ctx = canvas.getContext('2d');
+
+    // ---------- FUNGSI BANTU ----------
+    function formatPersen(val) { return val.toFixed(1) + '%'; }
+
+    function updateIndicators() {
+        inflasiVal.textContent = formatPersen(state.inflasi);
+        dayaBeliVal.innerHTML = Math.round(state.dayaBeli) + '<small>indeks</small>';
+        growthVal.textContent = formatPersen(state.growth);
+        unemployVal.textContent = formatPersen(state.unemployment);
+        scoreDisplay.textContent = state.score;
+    }
+
+    function renderPriceList() {
+        const items = [
+            { key: 'beras', name: 'Beras' },
+            { key: 'minyak', name: 'Minyak' },
+            { key: 'telur', name: 'Telur' },
+            { key: 'cabai', name: 'Cabai' },
+            { key: 'transportasi', name: 'Transport' },
+            { key: 'listrik', name: 'Listrik' },
+            { key: 'makanan', name: 'Makanan' }
+        ];
+        let html = '';
+        items.forEach(it => {
+            let val = state.prices[it.key] || 100;
+            let displayVal = Math.round(val);
+            let barWidth = Math.min(100, (val / 200) * 100);
+            html += `<div class="price-row">
+                <span class="price-name">${it.name}</span>
+                <div class="price-bar-bg"><div class="price-bar-fill" style="width:${barWidth}%"></div></div>
+                <span class="price-value">${displayVal}</span>
+            </div>`;
+        });
+        priceList.innerHTML = html;
+        drawChart();
+    }
+
+    function drawChart() {
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        // sumbu sederhana
+        const keys = ['beras','minyak','telur','cabai','transportasi','listrik','makanan'];
+        const labels = ['Brs','Mny','Tlr','Cbi','Trn','Lst','Mkn'];
+        const values = keys.map(k => state.prices[k] || 100);
+        const maxVal = Math.max(...values, 150);
+        const barW = (w - 30) / keys.length;
+        // gambar bar
+        for (let i = 0; i < keys.length; i++) {
+            let barH = (values[i] / maxVal) * (h - 30);
+            let x = 15 + i * barW;
+            let y = h - 15 - barH;
+            let gradient = ctx.createLinearGradient(x, y, x, h-15);
+            gradient.addColorStop(0, '#1f8e6e');
+            gradient.addColorStop(1, '#f4b942');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(x, y, barW-4, barH);
+            // label
+            ctx.fillStyle = '#1b4e63';
+            ctx.font = 'bold 8px "Segoe UI"';
+            ctx.fillText(labels[i], x + 2, h-5);
+            ctx.fillStyle = '#0b3b4b';
+            ctx.font = 'bold 7px "Segoe UI"';
+            ctx.fillText(Math.round(values[i]), x + 2, y - 3);
+        }
+        // garis referensi 100
+        ctx.beginPath();
+        ctx.strokeStyle = '#a0c0d0';
+        ctx.setLineDash([3,3]);
+        let refY = h - 15 - (100/maxVal)*(h-30);
+        ctx.moveTo(10, refY);
+        ctx.lineTo(w-10, refY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // ---------- STAGE RENDER ----------
+    function renderStage() {
+        const s = state.stage;
+        stageLabel.textContent = `Tahap ${s} · ${s === 1 ? 'Ekonomi Normal' : s === 2 ? 'Penyebab Inflasi' : s === 3 ? 'Inflasi Terjadi' : s === 4 ? 'Identifikasi Pihak' : s === 5 ? 'Pengambilan Kebijakan' : 'Evaluasi Hasil'}`;
+
+        if (s === 1) {
+            storyText.innerHTML = `🟢 <strong>Ekonomi Normal.</strong> Harga kebutuhan pokok stabil, daya beli terjaga, inflasi 2.1%. Produksi & distribusi lancar. <br><br>👉 Klik <strong>Lanjut</strong> untuk menghadapi guncangan ekonomi.`;
+            optionsGrid.innerHTML = '';
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '⏩ Lanjut ke Tahap 2';
+            state.selectedPolicy = null;
+        } 
+        else if (s === 2) {
+            // pilih 2-3 penyebab acak
+            if (state.causes.length === 0) {
+                const shuffled = [...penyebabList].sort(() => Math.random() - 0.5);
+                state.causes = shuffled.slice(0, 3);
+            }
+            let causeHtml = state.causes.map(c => `• ${c.text}`).join('<br>');
+            storyText.innerHTML = `⚠️ <strong>Guncangan Ekonomi!</strong> Beberapa peristiwa terjadi:<br>${causeHtml}<br><br>Analisislah, lalu lanjut ke tahap inflasi.`;
+            optionsGrid.innerHTML = '';
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '📈 Lanjut ke Tahap 3 (Inflasi)';
+            state.selectedPolicy = null;
+        } 
+        else if (s === 3) {
+            // Hitung inflasi & harga baru
+            if (!state.inflatedPrices) {
+                let totalInflasiAdd = state.causes.reduce((acc, c) => acc + c.inflasiAdd, 0);
+                let totalDayaBeliAdd = state.causes.reduce((acc, c) => acc + c.dayaBeliAdd, 0);
+                state.inflasi = Math.min(12, 2.1 + totalInflasiAdd);
+                state.dayaBeli = Math.max(60, 100 + totalDayaBeliAdd);
+                state.growth = Math.max(0, 5.2 - totalInflasiAdd * 0.3);
+                state.unemployment = Math.min(10, 5.5 + totalInflasiAdd * 0.2);
+
+                // harga naik proporsional
+                const inflasiRate = 1 + (state.inflasi - 2.1) / 12;
+                state.prices = {
+                    beras: Math.round(100 * (1 + (state.inflasi-2.1)*0.06)),
+                    minyak: Math.round(100 * (1 + (state.inflasi-2.1)*0.05)),
+                    telur: Math.round(100 * (1 + (state.inflasi-2.1)*0.055)),
+                    cabai: Math.round(100 * (1 + (state.inflasi-2.1)*0.09)),
+                    transportasi: Math.round(100 * (1 + (state.inflasi-2.1)*0.07)),
+                    listrik: Math.round(100 * (1 + (state.inflasi-2.1)*0.04)),
+                    makanan: Math.round(100 * (1 + (state.inflasi-2.1)*0.065))
+                };
+                state.inflatedPrices = { ...state.prices };
+                state.dayaBeli = Math.max(65, 100 - (state.inflasi - 2.1) * 5.5);
+            }
+
+            storyText.innerHTML = `🔴 <strong>Inflasi Terjadi!</strong> Harga kebutuhan pokok melonjak. Inflasi naik menjadi ${state.inflasi.toFixed(1)}%. Daya beli turun menjadi ${Math.round(state.dayaBeli)}. Masyarakat mengeluh, produsen tertekan. <br><br>📊 Lihat perbandingan harga di panel kanan.`;
+            optionsGrid.innerHTML = '';
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '👥 Lanjut ke Tahap 4 (Pihak Terlibat)';
+            state.selectedPolicy = null;
+            renderPriceList();
+            updateIndicators();
+        } 
+        else if (s === 4) {
+            storyText.innerHTML = `👥 <strong>Identifikasi Pihak yang Terlibat.</strong> Siapa yang paling terdampak? Pilih satu pihak yang paling terdampak dan paling membutuhkan perhatian.<br><br>Klik salah satu pihak di bawah ini.`;
+            // buat tombol pihak
+            optionsGrid.innerHTML = '';
+            pihakList.forEach(p => {
+                let btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = p;
+                btn.onclick = () => {
+                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    state.selectedPolicy = p;
+                    confirmBtn.disabled = false;
+                    // feedback
+                    feedbackBox.innerHTML = `Anda memilih <strong>${p}</strong> sebagai pihak paling terdampak. Apakah anda yakin?`;
+                };
+                optionsGrid.appendChild(btn);
+            });
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '➡️ Lanjut ke Tahap 5 (Kebijakan)';
+            updateIndicators();
+        } 
+        else if (s === 5) {
+            storyText.innerHTML = `🏛️ <strong>Pengambilan Kebijakan.</strong> Pilih kebijakan yang paling tepat untuk mengendalikan inflasi. Pertimbangkan dampaknya!`;
+            optionsGrid.innerHTML = '';
+            kebijakanList.forEach(kb => {
+                let btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = kb.label;
+                btn.title = kb.desk;
+                btn.onclick = () => {
+                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    state.selectedPolicy = kb.id;
+                    confirmBtn.disabled = false;
+                    feedbackBox.innerHTML = `Anda memilih: <strong>${kb.label}</strong> — ${kb.desk}`;
+                };
+                optionsGrid.appendChild(btn);
+            });
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '📊 Terapkan Kebijakan & Evaluasi';
+            updateIndicators();
+        } 
+        else if (s === 6) {
+            // EVALUASI
+            let policy = kebijakanList.find(k => k.id === state.selectedPolicy);
+            if (!policy) policy = kebijakanList[0]; // fallback
+
+            // terapkan efek kebijakan
+            state.inflasi = Math.max(1.5, state.inflasi + policy.effect.inflasi);
+            state.dayaBeli = Math.min(120, Math.max(50, state.dayaBeli + policy.effect.dayaBeli));
+            state.growth = Math.max(-2, state.growth + policy.effect.growth);
+            state.unemployment = Math.max(3, Math.min(12, state.unemployment + policy.effect.unemployment));
+            state.score += policy.effect.score || 5;
+
+            // penyesuaian harga sesuai inflasi baru
+            let rasio = state.inflasi / (state.inflatedPrices ? (Object.values(state.inflatedPrices).reduce((a,b)=>a+b,0)/7) : 100);
+            // gunakan data harga sebelumnya
+            state.prices = {
+                beras: Math.round(state.prices.beras * (1 + (policy.effect.inflasi * 0.02))),
+                minyak: Math.round(state.prices.minyak * (1 + (policy.effect.inflasi * 0.02))),
+                telur: Math.round(state.prices.telur * (1 + (policy.effect.inflasi * 0.02))),
+                cabai: Math.round(state.prices.cabai * (1 + (policy.effect.inflasi * 0.02))),
+                transportasi: Math.round(state.prices.transportasi * (1 + (policy.effect.inflasi * 0.02))),
+                listrik: Math.round(state.prices.listrik * (1 + (policy.effect.inflasi * 0.02))),
+                makanan: Math.round(state.prices.makanan * (1 + (policy.effect.inflasi * 0.02)))
+            };
+
+            // hitung skor total berdasarkan indikator akhir
+            let skorAkhir = state.score;
+            if (state.inflasi < 4.5) skorAkhir += 20;
+            else if (state.inflasi < 6) skorAkhir += 10;
+            if (state.dayaBeli > 90) skorAkhir += 15;
+            else if (state.dayaBeli > 80) skorAkhir += 8;
+            if (state.growth > 4.5) skorAkhir += 10;
+            else if (state.growth > 3) skorAkhir += 5;
+            if (state.unemployment < 6) skorAkhir += 10;
+            state.score = Math.min(100, skorAkhir);
+
+            // status pesan
+            let status = '';
+            if (state.inflasi < 4 && state.dayaBeli > 85) status = '🏆 HEBAT! Anda berhasil mengendalikan inflasi dengan baik.';
+            else if (state.inflasi < 6 && state.dayaBeli > 75) status = '👍 CUKUP BAIK. Inflasi terkendali namun perlu perbaikan.';
+            else if (state.inflasi > 7) status = '⚠️ TERLALU LAMBAT. Inflasi tinggi, daya beli tergerus.';
+            else status = '📉 DAMPAK SAMPING. Kebijakan menimbulkan efek negatif pada pertumbuhan.';
+
+            storyText.innerHTML = `📋 <strong>Evaluasi Hasil.</strong> Kebijakan: ${policy.label}. Inflasi akhir: ${state.inflasi.toFixed(1)}%, Daya beli: ${Math.round(state.dayaBeli)}, Pertumbuhan: ${state.growth.toFixed(1)}%, Pengangguran: ${state.unemployment.toFixed(1)}%.<br><br><strong>${status}</strong>`;
+            feedbackBox.innerHTML = `💡 ${policy.desk} — Efek: inflasi ${policy.effect.inflasi>0?'+':''}${policy.effect.inflasi}%, daya beli ${policy.effect.dayaBeli>0?'+':''}${policy.effect.dayaBeli}, pertumbuhan ${policy.effect.growth>0?'+':''}${policy.effect.growth}%. Skor kebijakan: +${policy.effect.score}.`;
+
+            optionsGrid.innerHTML = '';
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '✅ Selesai';
+            updateIndicators();
+            renderPriceList();
+            statusPesan.textContent = status;
+        }
+        updateIndicators();
+        renderPriceList();
+    }
+
+    // ---------- HANDLER KONFIRMASI ----------
+    function handleConfirm() {
+        if (state.stage === 1) {
+            state.stage = 2;
+            renderStage();
+        } 
+        else if (state.stage === 2) {
+            state.stage = 3;
+            renderStage();
+        } 
+        else if (state.stage === 3) {
+            state.stage = 4;
+            renderStage();
+        } 
+        else if (state.stage === 4) {
+            if (!state.selectedPolicy) {
+                feedbackBox.innerHTML = '⚠️ Pilih salah satu pihak terlebih dahulu!';
+                return;
+            }
+            state.stage = 5;
+            renderStage();
+        } 
+        else if (state.stage === 5) {
+            if (!state.selectedPolicy) {
+                feedbackBox.innerHTML = '⚠️ Pilih salah satu kebijakan terlebih dahulu!';
+                return;
+            }
+            state.stage = 6;
+            renderStage();
+        }
+    }
+
+    // ---------- RESET ----------
+    function resetSimulation() {
+        state.stage = 1;
+        state.inflasi = 2.1;
+        state.dayaBeli = 100;
+        state.growth = 5.2;
+        state.unemployment = 5.5;
+        state.score = 0;
+        state.prices = { beras: 100, minyak: 100, telur: 100, cabai: 100, transportasi: 100, listrik: 100, makanan: 100 };
+        state.inflatedPrices = null;
+        state.selectedPolicy = null;
+        state.causes = [];
+        state.policyEffect = null;
+        state.stepDone = false;
+        state.decisionLog = [];
+        statusPesan.textContent = '⭐ Simulasi direset.';
+        feedbackBox.innerHTML = '💡 Pilih tindakan yang tepat untuk mengendalikan inflasi.';
+        renderStage();
+        updateIndicators();
+    }
+
+    // ---------- EVENT LISTENER ----------
+    confirmBtn.addEventListener('click', handleConfirm);
+    resetBtn.addEventListener('click', resetSimulation);
+
+    // inisialisasi
+    renderStage();
+    updateIndicators();
+    renderPriceList();
+</script>
+</body>
+</html>
